@@ -18,14 +18,14 @@ This chart bootstraps Grafana and Logstash deployments on a Kubernetes cluster u
 ### Add Helm Repository
 
 ```sh
-helm repo add dbeast https://github.com/dbeast-co/dbeast-monitor-helm
+helm repo add dbeast-monitor https://dbeast-co.github.io/dbeast-monitor-helm
 helm repo update
 ```
 
 ### Install Chart
 
 ```sh
-helm install dbeast-monitor dbeast/dbeast-monitor -f values.yaml
+helm install dbeast-monitor dbeast-monitor/dbeast-monitor
 ```
 
 The command deploys Grafana and Logstash on the Kubernetes cluster with default configurations. The configurations can be customized using the `values.yaml` file.
@@ -39,6 +39,43 @@ helm uninstall dbeast-monitor
 ```
 
 This command removes all the Kubernetes components associated with the chart and deletes the release.
+
+## Custom Values File Example
+
+To customize the deployment while keeping the rest of the values as defaults, you can create your own `custom-values.yaml` file. Below is an example of a partial custom values file:
+
+```yaml
+ingress:
+  enabled: true
+  hosts:
+    - dbeast.mycompany.com
+  paths:
+    - /
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+
+logstash:
+  resources:
+    limits:
+      cpu: 2
+      memory: 6Gi
+    requests:
+      cpu: 2
+      memory: 2Gi
+  env:
+    - name: LS_HEAP_SIZE
+      value: "1g"
+```
+
+To use the custom values file along with the default values, run the following command:
+
+```sh
+helm install dbeast-monitor dbeast-monitor/dbeast-monitor -f custom-values.yaml
+```
+
+This command merges the values from `custom-values.yaml` with the default values specified in `values.yaml`, allowing you to override only the parts you need.
 
 ## Configuration
 
@@ -82,38 +119,3 @@ The following table lists the configurable parameters of the chart and their def
 | `logstash.env`                         | List of environment variables for Logstash                                      | `LS_JAVA_OPTS: "-Xms1g -Xmx1g"`      |
 | `logstash.config.logstash.yml`         | Configuration for Logstash                                         | `details as per provided yaml`       |
 
-## Custom Values File Example
-
-To customize the deployment while keeping the rest of the values as defaults, you can create your own `custom-values.yaml` file. Below is an example of a partial custom values file:
-
-```yaml
-grafana:
-  service:
-    type: LoadBalancer
-    port: 8080
-  env:
-    - name: GF_SECURITY_ADMIN_PASSWORD
-      value: "securepassword"
-    - name: GF_USERS_ALLOW_SIGN_UP
-      value: "false"
-
-logstash:
-  resources:
-    limits:
-      cpu: 1
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-  env:
-    - name: LS_HEAP_SIZE
-      value: "2g"
-```
-
-To use the custom values file along with the default values, run the following command:
-
-```sh
-helm install dbeast-monitor dbeast/dbeast-monitor -f custom-values.yaml
-```
-
-This command merges the values from `custom-values.yaml` with the default values specified in `values.yaml`, allowing you to override only the parts you need.
