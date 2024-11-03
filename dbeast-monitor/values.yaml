@@ -1,4 +1,4 @@
-appVersion: "1.0.0"
+appVersion: "1.0.1"
 grafana:
   image: "grafana/grafana-oss:9.5.10-ubuntu"
   service:
