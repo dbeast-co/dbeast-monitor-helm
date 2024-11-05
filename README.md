@@ -4,6 +4,7 @@
 
 A Helm chart for deploying Grafana and Logstash as part of the DBeast-monitor stack in Kubernetes.
 
+The "DBeast monitor" repository: https://github.com/dbeast-co/dbeast-monitor
 ## Introduction
 
 This chart bootstraps Grafana and Logstash deployments on a Kubernetes cluster using the Helm package manager.
