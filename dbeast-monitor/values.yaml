@@ -1,4 +1,4 @@
-appVersion: "1.0.1"
+appVersion: "1.0.0"
 grafana:
   image: "grafana/grafana-oss:9.5.10-ubuntu"
   service:
@@ -21,7 +21,7 @@ grafana:
       accessModes:
         - ReadWriteOnce
       size: 200Mi
-  pluginUrl: "https://github.com/dbeast-co/dbeast-monitor/releases/latest/download/dbeast-dbeastmonitor-app-container-{{ .Values.appVersion }}.tar.gz"
+  pluginUrl: "https://github.com/dbeast-co/dbeast-monitor/releases/download/DBeastMonitor-V-{{ .Values.appVersion }}/dbeast-dbeastmonitor-app-container-{{ .Values.appVersion }}.tar.gz"
   env:
     - name: GF_LOG_LEVEL
       value: "info"

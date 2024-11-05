@@ -93,9 +93,16 @@ spec:
         {{- end }}
         #Run lifecycle if this is new installation
         lifecycle:
+        {{- if .Release.IsInstall }}
           postStart:
             exec:
               command: [ "/bin/sh", "-c", "sleep 30; curl -X POST -H 'Content-Type: application/json' -d '{\"enabled\": true}' -H 'Authorization: Basic YWRtaW46YWRtaW4=' http://localhost:3000/api/plugins/dbeast-dbeastmonitor-app/settings" ]
+        {{- else if .Release.IsUpgrade }}
+          postStart:
+            exec:
+              command: [ "/bin/sh", "-c", "sleep 30; curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Basic YWRtaW46YWRtaW4=' http://localhost:3000/api/plugins/dbeast-dbeastmonitor-app/settings/reload" ]
+        {{- end }}
+
       volumes:
         - name: grafana-config
           configMap:
