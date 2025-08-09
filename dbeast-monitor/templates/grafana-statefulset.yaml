@@ -41,7 +41,7 @@ spec:
                 if [[ "$(cat /var/lib/grafana/plugins/dbeast-dbeastmonitor-app/plugin.json | grep version )" != *"{{ .Values.appVersion }}"* ]]; then
                   rm -rf var/lib/grafana/plugins/dbeast-dbeastmonitor-app/*
                   curl -L -o /tmp/dbeast-dbeastmonitor-plugin.zip {{ tpl .Values.grafana.pluginUrl $ }}
-                  unzip -xvzf /tmp/dbeast-dbeastmonitor-plugin.zip -C /var/lib/grafana/plugins
+                  unzip /tmp/dbeast-dbeastmonitor-plugin.zip -C /var/lib/grafana/plugins
                   echo "Installed the new plugin version: {{ .Values.appVersion }}"
                 else
                   echo "Persistent volume is not empty. Skipping data copy."
