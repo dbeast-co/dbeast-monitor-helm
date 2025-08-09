@@ -108,7 +108,7 @@ logstash:
         else
           echo "Persistent volume is not empty. Skipping data copy."
         fi
-  image: "logstash:8.14.3"
+  image: "logstash:8.18.1"
   service:
     type: ClusterIP
     port: 9600
