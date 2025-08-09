@@ -40,6 +40,8 @@ grafana:
       value: "console file"
     - name: GF_INSTALL_PLUGINS
       value: "marcusolsson-json-datasource,marcusolsson-dynamictext-panel,volkovlabs-grapi-datasource"
+    - name: DBEAST_MONITOR_VERSION
+      value: "Container"
   volumes: {}
   config:
     grafana.ini:
