@@ -1,6 +1,6 @@
-appVersion: "1.0.3"
+appVersion: "2.0.0"
 grafana:
-  image: "grafana/grafana-oss:9.5.10-ubuntu"
+  image: "grafana/grafana-oss:latest"
   service:
     type: ClusterIP
     port: 3000
@@ -21,7 +21,7 @@ grafana:
       accessModes:
         - ReadWriteOnce
       size: 200Mi
-  pluginUrl: "https://github.com/dbeast-co/dbeast-monitor/releases/download/DBeastMonitor-V-{{ .Values.appVersion }}/dbeast-dbeastmonitor-app-container-{{ .Values.appVersion }}.tar.gz"
+  pluginUrl: "https://github.com/dbeast-co/dbeast-monitor/releases/download/v{{ .Values.appVersion }}/dbeast-dbeastmonitor-app.zip"
   env:
     - name: GF_LOG_LEVEL
       value: "info"
@@ -29,14 +29,14 @@ grafana:
       value: "console file"
     - name: GF_INSTALL_PLUGINS
       value: "marcusolsson-json-datasource,marcusolsson-dynamictext-panel,volkovlabs-grapi-datasource"
+    - name: DBEAST_MONITOR_VERSION
+      value: "Container"
   volumes: {}
   config:
     grafana.ini:
       app_mode: development
       server:
         domain: "{{ if (and .Values.ingress.enabled .Values.ingress.hosts) }}{{ tpl (.Values.ingress.hosts | first) . }}{{ else }}''{{ end }}"
-      feature_toggles:
-        topnav: false
     ldap:
       enabled: false
       config: |
@@ -85,7 +85,7 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 
 logstash:
-  image: "logstash:8.14.3"
+  image: "logstash:8.18.1"
   service:
     type: ClusterIP
     port: 9600
