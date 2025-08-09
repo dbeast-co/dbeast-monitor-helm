@@ -1,4 +1,4 @@
-appVersion: "1.0.3"
+appVersion: "2.0.0"
 grafana:
   init:
     command:
@@ -11,7 +11,7 @@ grafana:
         else
           echo "Persistent volume is not empty. Skipping data copy."
         fi
-  image: "grafana/grafana-oss:9.5.10-ubuntu"
+  image: "grafana/grafana-oss:latest"
   service:
     type: ClusterIP
     port: 3000
@@ -32,7 +32,7 @@ grafana:
       accessModes:
         - ReadWriteOnce
       size: 200Mi
-  pluginUrl: "https://github.com/dbeast-co/dbeast-monitor/releases/download/DBeastMonitor-V-{{ .Values.appVersion }}/dbeast-dbeastmonitor-app-container-{{ .Values.appVersion }}.tar.gz"
+  pluginUrl: "https://github.com/dbeast-co/dbeast-monitor/releases/download/DBeastMonitor-V-{{ .Values.appVersion }}/dbeast-dbeastmonitor-app.zip"
   env:
     - name: GF_LOG_LEVEL
       value: "info"
@@ -46,8 +46,6 @@ grafana:
       app_mode: development
       server:
         domain: "{{ if (and .Values.ingress.enabled .Values.ingress.hosts) }}{{ tpl (.Values.ingress.hosts | first) . }}{{ else }}''{{ end }}"
-      feature_toggles:
-        topnav: false
     ldap:
       enabled: false
       config: |
