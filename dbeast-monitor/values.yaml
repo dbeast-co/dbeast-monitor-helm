@@ -32,7 +32,7 @@ grafana:
       accessModes:
         - ReadWriteOnce
       size: 200Mi
-  pluginUrl: "https://github.com/dbeast-co/dbeast-monitor/releases/download/DBeastMonitor-V-{{ .Values.appVersion }}/dbeast-dbeastmonitor-app.zip"
+  pluginUrl: "https://github.com/dbeast-co/dbeast-monitor/releases/download/v{{ .Values.appVersion }}/dbeast-dbeastmonitor-app.zip"
   env:
     - name: GF_LOG_LEVEL
       value: "info"
