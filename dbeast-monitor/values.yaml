@@ -1,16 +1,5 @@
 appVersion: "2.0.0"
 grafana:
-  init:
-    command:
-      - sh
-      - -c
-      - |
-        if [ -z "$(ls -A /tmp/grafana | grep -v "lost+found")" ]; then
-          echo "Persistent volume is empty. Copying data from image..."
-          cp -R /var/lib/grafana/* /tmp/grafana/
-        else
-          echo "Persistent volume is not empty. Skipping data copy."
-        fi
   image: "grafana/grafana-oss:latest"
   service:
     type: ClusterIP
@@ -96,18 +85,6 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 
 logstash:
-  init:
-    command:
-      - sh
-      - -c
-      - |
-        if [ -z "$(ls -A /tmp/logstash | grep -v "lost+found" )" ]; then
-          echo "Persistent volume is empty. Copying data from image..."
-          cp -R /usr/share/logstash/config/* /tmp/logstash/
-          mkdir -p /tmp/logstash/conf.d
-        else
-          echo "Persistent volume is not empty. Skipping data copy."
-        fi
   image: "logstash:8.18.1"
   service:
     type: ClusterIP

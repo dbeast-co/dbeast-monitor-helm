@@ -13,53 +13,49 @@ spec:
         app: {{ .Release.Name }}-grafana
     spec:
       initContainers:
-        - name: grafana-init
-          image: {{ .Values.grafana.image }}
-          securityContext:
-            runAsUser: 0
-          command:
-            {{- toYaml .Values.grafana.init.command | nindent 12 }}
-          volumeMounts:
-          - name: grafana-storage
-            mountPath: /tmp/grafana
+      - name: grafana-init
+        image: {{ .Values.grafana.image }}
+        command:
+          - sh
+          - -c
+          - |
+            if [ -z "$(ls -A /tmp/grafana)" ]; then
+              echo "Persistent volume is empty. Copying data from image..."
+              cp -R /var/lib/grafana/* /tmp/grafana/
+            else
+              echo "Persistent volume is not empty. Skipping data copy."
+            fi
+        volumeMounts:
+        - name: grafana-storage
+          mountPath: /tmp/grafana
 
-        - name: install-dbeast-plugin
-          image: curlimages/curl:7.85.0
-          securityContext:
-            runAsUser: 0
-          command:
-            - sh
-            - -c
-            - |
-              set -e
-              mkdir -p /var/lib/grafana/plugins/dbeast-dbeastmonitor-app
-              if [ -z "$(ls -A /var/lib/grafana/plugins/dbeast-dbeastmonitor-app)" ]; then
-                echo "Persistent volume is empty. Copying data from image..."
+      - name: install-dbeast-plugin
+        image: curlimages/curl:7.85.0
+        securityContext:
+          runAsUser: 0
+        command:
+          - sh
+          - -c
+          - |
+            set -e
+            mkdir -p /var/lib/grafana/plugins/dbeast-dbeastmonitor-app
+            if [ -z "$(ls -A /var/lib/grafana/plugins/dbeast-dbeastmonitor-app)" ]; then
+              echo "Persistent volume is empty. Copying data from image..."
+              curl -L -o /tmp/dbeast-dbeastmonitor-app.zip {{ tpl .Values.grafana.pluginUrl $ }}
+              unzip -o /tmp/dbeast-dbeastmonitor-app.zip -d /var/lib/grafana/plugins/dbeast-dbeastmonitor-app
+            else
+              if [[ "$(cat /var/lib/grafana/plugins/dbeast-dbeastmonitor-app/plugin.json | grep version )" != *"{{ .Values.appVersion }}"* ]]; then
+                rm -rf var/lib/grafana/plugins/dbeast-dbeastmonitor-app/*
                 curl -L -o /tmp/dbeast-dbeastmonitor-app.zip {{ tpl .Values.grafana.pluginUrl $ }}
                 unzip -o /tmp/dbeast-dbeastmonitor-app.zip -d /var/lib/grafana/plugins/dbeast-dbeastmonitor-app
+                echo "Installed the new plugin version: {{ .Values.appVersion }}"
               else
-                if [[ "$(cat /var/lib/grafana/plugins/dbeast-dbeastmonitor-app/plugin.json | grep version )" != *"{{ .Values.appVersion }}"* ]]; then
-                  rm -rf var/lib/grafana/plugins/dbeast-dbeastmonitor-app/*
-                  curl -L -o /tmp/dbeast-dbeastmonitor-app.zip {{ tpl .Values.grafana.pluginUrl $ }}
-                  unzip -o /tmp/dbeast-dbeastmonitor-app.zip -d /var/lib/grafana/plugins/dbeast-dbeastmonitor-app
-                  echo "Installed the new plugin version: {{ .Values.appVersion }}"
-                else
-                  echo "Persistent volume is not empty. Skipping data copy."
-                fi
+                echo "Persistent volume is not empty. Skipping data copy."
               fi
-          volumeMounts:
-          - name: grafana-plugins
-            mountPath: /var/lib/grafana/plugins
-
-        - name: logstash-init
-          image: {{ .Values.logstash.image }}
-          securityContext:
-            runAsUser: 0
-          command:
-            {{- toYaml .Values.logstash.init.command | nindent 12 }}
-          volumeMounts:
-            - name: logstash-config
-              mountPath: /tmp/logstash
+            fi
+        volumeMounts:
+        - name: grafana-plugins
+          mountPath: /var/lib/grafana/plugins
 
       containers:
       - name: grafana
@@ -104,36 +100,7 @@ spec:
             exec:
               command: [ "/bin/sh", "-c", "sleep 30; curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Basic YWRtaW46YWRtaW4=' http://localhost:3000/api/plugins/dbeast-dbeastmonitor-app/settings/reload" ]
         {{- end }}
-      - name: logstash
-        resources:
-          {{- toYaml .Values.logstash.resources | nindent 10 }}
-        securityContext:
-          runAsUser: 0
-        image: {{ .Values.logstash.image }}
-        ports:
-        - containerPort: {{ .Values.logstash.service.port }}
-        env:
-        {{- range .Values.logstash.env }}
-        - name: {{ .name }}
-          value: {{ .value }}
-        {{- end }}
-        volumeMounts:
-          - name: logstash-config
-            mountPath: /usr/share/logstash/config
-          - name: logstash-yml
-            mountPath: /usr/share/logstash/config/logstash.yml
-            subPath: logstash.yml
-          - name: logstash-lib
-            mountPath: /var/lib/logstash
-          - name: logstash-logs
-            mountPath: /var/log/logstash
-        {{- range .Values.logstash.volumes }}
-          - name: {{ .name }}
-            mountPath: {{ .mountPath }}
-            {{- if .subPath }}
-            subPath: {{ .subPath }}
-            {{- end }}
-        {{- end }}
+
       volumes:
         - name: grafana-config
           configMap:
@@ -147,41 +114,14 @@ spec:
         - name: grafana-plugins
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-grafana-plugins-pvc
+        - name: logstash-config
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-logstash-config-pvc
       {{- range .Values.grafana.volumes }}
         - name: {{ .name }}
           {{- if .source.configMap }}
           configMap:
             name: {{ .source.configMap.name }}
-          {{- else if .source.persistentVolumeClaim }}
-          persistentVolumeClaim:
-            claimName: {{ .source.persistentVolumeClaim.claimName }}
-          {{- end }}
-      {{- end }}
-        - name: logstash-config
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-logstash-config-pvc
-        - name: logstash-lib
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-logstash-lib-pvc
-        - name: logstash-logs
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-logstash-logs-pvc
-        - name: logstash-yml
-          configMap:
-            name: {{ .Release.Name }}-logstash-config
-            items:
-              - key: logstash.yml
-                path: logstash.yml
-      {{- range .Values.logstash.volumes }}
-        - name: {{ .name }}
-          {{- if .source.configMap }}
-          configMap:
-            name: {{ .source.configMap.name }}
-            {{- if .source.configMap.key }}
-            items:
-              - key: {{ .source.configMap.key }}
-                path: {{ .source.configMap.path | default .source.configMap.key }}
-            {{- end }}
           {{- else if .source.persistentVolumeClaim }}
           persistentVolumeClaim:
             claimName: {{ .source.persistentVolumeClaim.claimName }}

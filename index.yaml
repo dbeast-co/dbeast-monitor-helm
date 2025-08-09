@@ -2,15 +2,15 @@ apiVersion: v1
 entries:
   dbeast-monitor:
   - apiVersion: v2
-    created: "2025-08-09T19:20:51.496991621+03:00"
+    created: "2025-08-09T19:31:10.413739177+03:00"
     description: A Helm chart for deploying "DBeast Monitor" for Elastic Stack
-    digest: 3b7cd363857e5bbc2c54479d401dd05d0a54a11ecebe40c0726b8318effd9f75
+    digest: fca985b0289a1ce99425ca7096222b7ce1d88231622385c2bfc7dc14b331450c
     name: dbeast-monitor
     urls:
     - https://dbeast-co.github.io/dbeast-monitor-helm/dbeast-monitor-2.0.0.tgz
     version: 2.0.0
   - apiVersion: v2
-    created: "2025-08-09T19:20:51.493127802+03:00"
+    created: "2025-08-09T19:31:10.41111274+03:00"
     description: A Helm chart for deploying "DBeast Monitor" for Elastic Stack
     digest: 47fdd5a171c9746bc17e9d4215c9135eb5f803c3cc0ab7fc682c96c28475884a
     name: dbeast-monitor
@@ -18,7 +18,7 @@ entries:
     - https://dbeast-co.github.io/dbeast-monitor-helm/dbeast-monitor-1.0.3.tgz
     version: 1.0.3
   - apiVersion: v2
-    created: "2025-08-09T19:20:51.489549348+03:00"
+    created: "2025-08-09T19:31:10.409109265+03:00"
     description: A Helm chart for deploying "DBeast Monitor" for Elastic Stack
     digest: 1637376863dcc4f14557d038dc918f55cb4a894ee9d9fd24c840c96f931fc134
     name: dbeast-monitor
@@ -26,7 +26,7 @@ entries:
     - https://dbeast-co.github.io/dbeast-monitor-helm/dbeast-monitor-1.0.2.tgz
     version: 1.0.2
   - apiVersion: v2
-    created: "2025-08-09T19:20:51.48719474+03:00"
+    created: "2025-08-09T19:31:10.406726786+03:00"
     description: A Helm chart for deploying "DBeast Monitor" for Elastic Stack
     digest: dfc1b36d33b9b5149026fd2fe4b0c8e21b6bf34239bd408c5b3d7e6876a70a23
     name: dbeast-monitor
@@ -34,11 +34,11 @@ entries:
     - https://dbeast-co.github.io/dbeast-monitor-helm/dbeast-monitor-1.0.1.tgz
     version: 1.0.1
   - apiVersion: v2
-    created: "2025-08-09T19:20:51.484766036+03:00"
+    created: "2025-08-09T19:31:10.402479691+03:00"
     description: A Helm chart for deploying "DBeast Monitor" for Elastic Stack
     digest: 2808e5f5e6974984f8deb449366de3450f3e6e3afa505e9a51b00fb08c92568b
     name: dbeast-monitor
     urls:
     - https://dbeast-co.github.io/dbeast-monitor-helm/dbeast-monitor-1.0.0.tgz
     version: 1.0.0
-generated: "2025-08-09T19:20:51.480433633+03:00"
+generated: "2025-08-09T19:31:10.399082991+03:00"
