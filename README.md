@@ -2,6 +2,8 @@
 
 ![Version: 1.0.3](https://img.shields.io/badge/Version-1.0.3-informational?style=flat-square) ![Version: 1.0.2](https://img.shields.io/badge/Version-1.0.2-informational?style=flat-square) ![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square)
 
+We haven’t added compatibility with application v2+ yet.
+
 A Helm chart for deploying Grafana and Logstash as part of the DBeast-monitor stack in Kubernetes.
 
 "DBeast monitor" repository: https://github.com/dbeast-co/dbeast-monitor
